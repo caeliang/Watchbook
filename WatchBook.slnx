@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="WatchBook.Application/WatchBook.Application.csproj" />
+  <Project Path="WatchBook.Domain/WatchBook.Domain.csproj" />
+  <Project Path="WatchBook.Infrastructure/WatchBook.Infrastructure.csproj" />
+  <Project Path="WatchBook/WatchBook.Web.csproj" />
+</Solution>

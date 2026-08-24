@@ -1,57 +1,65 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WatchBook.Infrastructure.Services.Interfaces;
+using WatchBook.Web.Models.Content;
 
-namespace WatchBook.Web.Controllers;
+namespace WatchBook.Controllers;
 
 [ApiController]
 [Route("api/content")]
 public sealed class ContentController(
     IContentImportService contentImportService) : ControllerBase
 {
-    private readonly IContentImportService _contentImportService =
-        contentImportService;
-
-    /// <summary>
-    /// Imports a movie from TMDb and saves it to the database.
-    /// </summary>
     [HttpPost("import/movie/{tmdbId:int}")]
     public async Task<IActionResult> ImportMovie(
         int tmdbId,
         CancellationToken cancellationToken)
     {
-        var content = await _contentImportService.ImportMovieAsync(
+        if (tmdbId <= 0)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Invalid TMDb ID",
+                detail: "TMDb ID must be greater than zero.");
+        }
+
+        var content = await contentImportService.ImportMovieAsync(
             tmdbId,
             cancellationToken);
 
-        return Ok(new
+        return Ok(new ContentImportResponse
         {
-            success = true,
-            message = "Movie imported and saved successfully.",
-            contentId = content.Id,
-            tmdbId = content.TmdbId,
-            title = content.Title
+            Success = true,
+            Message = "Movie imported and saved successfully.",
+            ContentId = content.Id,
+            TmdbId = content.TmdbId,
+            Title = content.Title
         });
     }
 
-    /// <summary>
-    /// Imports a TV series from TMDb and saves it to the database.
-    /// </summary>
     [HttpPost("import/tv/{tmdbId:int}")]
     public async Task<IActionResult> ImportTvSeries(
         int tmdbId,
         CancellationToken cancellationToken)
     {
-        var content = await _contentImportService.ImportTvSeriesAsync(
+        if (tmdbId <= 0)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Invalid TMDb ID",
+                detail: "TMDb ID must be greater than zero.");
+        }
+
+        var content = await contentImportService.ImportTvSeriesAsync(
             tmdbId,
             cancellationToken);
 
-        return Ok(new
+        return Ok(new ContentImportResponse
         {
-            success = true,
-            message = "TV series imported and saved successfully.",
-            contentId = content.Id,
-            tmdbId = content.TmdbId,
-            title = content.Title
+            Success = true,
+            Message = "TV series imported and saved successfully.",
+            ContentId = content.Id,
+            TmdbId = content.TmdbId,
+            Title = content.Title
         });
     }
 }

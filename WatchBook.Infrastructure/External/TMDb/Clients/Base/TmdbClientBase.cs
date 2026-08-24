@@ -69,6 +69,8 @@ public abstract class TmdbClientBase(HttpClient httpClient)
             $"Status: {(int)response.StatusCode} " +
             $"({response.StatusCode}). " +
             $"Uri: {requestUri}. " +
-            $"Response: {message}");
+            $"Response: {message}",
+            null,
+            response.StatusCode);
     }
 }

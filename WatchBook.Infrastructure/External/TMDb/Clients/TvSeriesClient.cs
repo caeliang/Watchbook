@@ -93,4 +93,11 @@ public sealed class TvSeriesClient(HttpClient httpClient)
         => GetAsync<TvEpisodeResponse>(
             $"tv/{seriesId}/season/{seasonNumber}/episode/{episodeNumber}",
             cancellationToken);
+    public Task<TvSeasonDetailsResponse> GetSeasonDetailsAsync(
+    int tvId,
+    int seasonNumber,
+    CancellationToken cancellationToken = default)
+    => GetAsync<TvSeasonDetailsResponse>(
+        $"tv/{tvId}/season/{seasonNumber}",
+        cancellationToken);
 }

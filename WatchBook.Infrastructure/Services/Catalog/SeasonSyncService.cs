@@ -5,11 +5,6 @@ using WatchBook.Infrastructure.Persistence;
 
 namespace WatchBook.Infrastructure.Services.Catalog;
 
-/// <summary>
-/// Synchronizes season entities from TMDb responses.
-/// Implements idempotent sync pattern: looks up season by TmdbId,
-/// creates if not found, updates properties, and persists to database.
-/// </summary>
 public sealed class SeasonSyncService
 {
     private readonly WatchBookDbContext _dbContext;
@@ -20,19 +15,12 @@ public sealed class SeasonSyncService
         _dbContext = dbContext;
     }
 
-    /// <summary>
-    /// Synchronizes a season entity from TMDb response.
-    /// Returns existing season if found by TmdbId, otherwise creates new one.
-    /// </summary>
-    /// <param name="contentId">The ID of the content (TV series) this season belongs to.</param>
-    /// <param name="response">The TMDb season response.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The synchronized season entity.</returns>
     public async Task<Season> SyncAsync(
-        int contentId,
-        TvSeasonResponse response,
+        Content content,
+        TvSeasonDetailsResponse response,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(content);
         ArgumentNullException.ThrowIfNull(response);
 
         var existingSeason = await _dbContext.Seasons
@@ -47,21 +35,22 @@ public sealed class SeasonSyncService
 
         var season = new Season
         {
-            ContentId = contentId,
             TmdbId = response.Id,
+            Content = content,
             SeasonNumber = response.SeasonNumber,
             Name = response.Name,
             Overview = response.Overview,
             PosterPath = response.PosterPath,
-            AirDate = response.AirDate,
-            EpisodeCount = response.Episodes?.Count ?? 0
+            AirDate = DateOnly.TryParse(
+                response.AirDate,
+                out var airDate)
+                    ? airDate
+                    : null,
+            EpisodeCount = response.Episodes.Count
         };
 
         await _dbContext.Seasons.AddAsync(
             season,
-            cancellationToken);
-
-        await _dbContext.SaveChangesAsync(
             cancellationToken);
 
         return season;

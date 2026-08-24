@@ -44,15 +44,9 @@ public sealed class CompanySyncService
             IsActive = true
         };
 
-
         await _dbContext.Companies.AddAsync(
             company,
             cancellationToken);
-
-
-        await _dbContext.SaveChangesAsync(
-            cancellationToken);
-
 
         return company;
     }

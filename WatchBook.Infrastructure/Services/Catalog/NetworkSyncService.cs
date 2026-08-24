@@ -56,9 +56,6 @@ public sealed class NetworkSyncService
             network,
             cancellationToken);
 
-        await _dbContext.SaveChangesAsync(
-            cancellationToken);
-
         return network;
     }
 }

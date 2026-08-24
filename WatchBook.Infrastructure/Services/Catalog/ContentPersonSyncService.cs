@@ -92,8 +92,6 @@ public sealed class ContentPersonSyncService
                 DisplayOrder = 0
             });
         }
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
     /// <summary>

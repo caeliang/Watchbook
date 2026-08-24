@@ -41,15 +41,9 @@ public sealed class CountrySyncService
             Name = response.Name
         };
 
-
         await _dbContext.Countries.AddAsync(
             country,
             cancellationToken);
-
-
-        await _dbContext.SaveChangesAsync(
-            cancellationToken);
-
 
         return country;
     }

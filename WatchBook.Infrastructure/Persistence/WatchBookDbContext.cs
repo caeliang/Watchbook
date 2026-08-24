@@ -103,7 +103,17 @@ public class WatchBookDbContext : IdentityDbContext<ApplicationUser, Application
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Content>()
+    .HasIndex(x => x.TmdbId)
+    .IsUnique();
 
+        modelBuilder.Entity<Season>()
+            .HasIndex(x => x.TmdbId)
+            .IsUnique();
+
+        modelBuilder.Entity<Episode>()
+            .HasIndex(x => x.TmdbId)
+            .IsUnique();
         // Apply all IEntityTypeConfiguration<T> configurations from this assembly
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(WatchBookDbContext).Assembly);
     }

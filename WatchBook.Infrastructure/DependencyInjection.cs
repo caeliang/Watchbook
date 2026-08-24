@@ -13,7 +13,7 @@ using WatchBook.Infrastructure.Persistence;
 using WatchBook.Infrastructure.Services;
 using WatchBook.Infrastructure.Services.Interfaces;
 using WatchBook.Infrastructure.Services.Catalog;
-
+using WatchBook.Infrastructure.Services.Import;
 namespace WatchBook.Infrastructure;
 
 public static class DependencyInjection
@@ -70,10 +70,13 @@ public static class DependencyInjection
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<ISlugGenerator, SlugGenerator>();
         services.AddScoped<NetworkSyncService>();
+        services.AddScoped<SeasonSyncService>();
+        services.AddScoped<EpisodeSyncService>();
         services.AddHttpContextAccessor();
-
-        services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<MovieImportService>();
+        services.AddScoped<TvSeriesImportService>();
         services.AddScoped<IContentImportService, ContentImportService>();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<GenreSyncService>();
         services.AddScoped<CompanySyncService>();
         services.AddScoped<CountrySyncService>();

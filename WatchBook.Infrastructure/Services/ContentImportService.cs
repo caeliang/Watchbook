@@ -1,43 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using WatchBook.Domain.Entities.Catalog;
-using WatchBook.Domain.Entities.Relations;
-using WatchBook.Domain.Enums.Content;
-using WatchBook.Infrastructure.External.TMDb.Interfaces;
-using WatchBook.Infrastructure.External.TMDb.Mapping;
-using WatchBook.Infrastructure.External.TMDb.Responses.TvSeries;
 using WatchBook.Infrastructure.Persistence;
-using WatchBook.Infrastructure.Services.Catalog;
 using WatchBook.Infrastructure.Services.Interfaces;
+using WatchBook.Infrastructure.Services.Import;
 
 namespace WatchBook.Infrastructure.Services;
 
-/// <summary>
-/// Imports TMDb content into domain entities and persists the result.
-/// Orchestrates the import workflow by retrieving TMDb data and delegating
-/// related entity synchronization to specialized sync services.
-/// </summary>
 public sealed class ContentImportService(
-    IMovieClient movieClient,
-    ITvSeriesClient tvSeriesClient,
-    GenreSyncService genreSyncService,
-    CompanySyncService companySyncService,
-    CountrySyncService countrySyncService,
-    NetworkSyncService networkSyncService,
-    PersonSyncService personSyncService,
+    MovieImportService movieImportService,
+    TvSeriesImportService tvSeriesImportService,
     WatchBookDbContext dbContext) : IContentImportService
 {
-    private readonly ITvSeriesClient _tvSeriesClient = tvSeriesClient;
-    private readonly IMovieClient _movieClient = movieClient;
-    private readonly WatchBookDbContext _dbContext = dbContext;
-
-    /// <summary>
-    /// Imports a movie from TMDb using its TMDb identifier.
-    /// </summary>
     public async Task<Content> ImportMovieAsync(
         int tmdbId,
         CancellationToken cancellationToken = default)
     {
-        var existingContent = await _dbContext.Contents
+        var existingContent = await dbContext.Contents
             .FirstOrDefaultAsync(
                 x => x.TmdbId == tmdbId,
                 cancellationToken);
@@ -47,110 +25,36 @@ public sealed class ContentImportService(
             return existingContent;
         }
 
-        var movie = await _movieClient.GetDetailsAsync(
-            tmdbId,
-            cancellationToken);
-
-        var credits = await _movieClient.GetCreditsAsync(
-            tmdbId,
-            cancellationToken);
-
-        var content = MovieMapper.ToEntity(movie);
-
-        //-----------------------------------------
-        // Genres
-        //-----------------------------------------
-
-        foreach (var genreResponse in movie.Genres)
-        {
-            var genre = await genreSyncService.SyncAsync(
-                genreResponse,
+        await using var transaction =
+            await dbContext.Database.BeginTransactionAsync(
                 cancellationToken);
 
-            content.ContentGenres.Add(
-                new ContentGenre
-                {
-                    Genre = genre
-                });
-        }
-
-        //-----------------------------------------
-        // Companies
-        //-----------------------------------------
-
-        foreach (var companyResponse in movie.ProductionCompanies)
+        try
         {
-            var company = await companySyncService.SyncAsync(
-                companyResponse,
+            var content = await movieImportService.ImportAsync(
+                tmdbId,
                 cancellationToken);
 
-            content.ContentCompanies.Add(
-                new ContentCompany
-                {
-                    Company = company
-                });
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+
+            return content;
         }
-
-        //-----------------------------------------
-        // Countries
-        //-----------------------------------------
-
-        foreach (var countryResponse in movie.ProductionCountries)
+        catch
         {
-            var country = await countrySyncService.SyncAsync(
-                countryResponse,
-                cancellationToken);
-
-            content.ContentCountries.Add(
-                new ContentCountry
-                {
-                    Country = country
-                });
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
         }
-
-        //-----------------------------------------
-        // Cast
-        //-----------------------------------------
-
-        foreach (var cast in credits.Cast)
-        {
-            var person = await personSyncService.SyncAsync(
-                cast,
-                cancellationToken);
-
-            content.ContentPeople.Add(
-                new ContentPerson
-                {
-                    Person = person,
-                    Role = PersonRole.Actor,
-                    CharacterName = cast.Character,
-                    DisplayOrder = cast.Order
-                });
-        }
-
-        //-----------------------------------------
-        // Save
-        //-----------------------------------------
-
-        _dbContext.Contents.Add(content);
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return content;
     }
 
-    /// <summary>
-    /// Imports a TV series from a TMDb response.
-    /// </summary>
     public async Task<Content> ImportTvSeriesAsync(
-        TvSeriesDetailsResponse response,
+        int tmdbId,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(response);
-
-        var existingContent = await _dbContext.Contents
+        var existingContent = await dbContext.Contents
             .FirstOrDefaultAsync(
-                x => x.TmdbId == response.Id,
+                x => x.TmdbId == tmdbId,
                 cancellationToken);
 
         if (existingContent is not null)
@@ -158,84 +62,26 @@ public sealed class ContentImportService(
             return existingContent;
         }
 
-        var content = TvSeriesMapper.ToEntity(response);
-
-        //-----------------------------------------
-        // Genres
-        //-----------------------------------------
-
-        foreach (var genreResponse in response.Genres)
-        {
-            var genre = await genreSyncService.SyncAsync(
-                genreResponse,
+        await using var transaction =
+            await dbContext.Database.BeginTransactionAsync(
                 cancellationToken);
 
-            content.ContentGenres.Add(
-                new ContentGenre
-                {
-                    Genre = genre
-                });
-        }
-
-        //-----------------------------------------
-        // Companies
-        //-----------------------------------------
-
-        foreach (var companyResponse in response.ProductionCompanies)
+        try
         {
-            var company = await companySyncService.SyncAsync(
-                companyResponse,
+            var content = await tvSeriesImportService.ImportAsync(
+                tmdbId,
                 cancellationToken);
 
-            content.ContentCompanies.Add(
-                new ContentCompany
-                {
-                    Company = company
-                });
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+
+            return content;
         }
-
-        //-----------------------------------------
-        // Countries
-        //-----------------------------------------
-
-        foreach (var countryResponse in response.ProductionCountries)
+        catch
         {
-            var country = await countrySyncService.SyncAsync(
-                countryResponse,
-                cancellationToken);
-
-            content.ContentCountries.Add(
-                new ContentCountry
-                {
-                    Country = country
-                });
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
         }
-
-        //-----------------------------------------
-        // Networks
-        //-----------------------------------------
-
-        foreach (var networkResponse in response.Networks)
-        {
-            var network = await networkSyncService.SyncAsync(
-                networkResponse,
-                cancellationToken);
-
-            content.ContentNetworks.Add(
-                new ContentNetwork
-                {
-                    Network = network
-                });
-        }
-
-        //-----------------------------------------
-        // Save
-        //-----------------------------------------
-
-        _dbContext.Contents.Add(content);
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return content;
     }
 }

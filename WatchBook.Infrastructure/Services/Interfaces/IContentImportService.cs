@@ -1,6 +1,4 @@
 ﻿using WatchBook.Domain.Entities.Catalog;
-using WatchBook.Infrastructure.External.TMDb.Responses.Movies;
-using WatchBook.Infrastructure.External.TMDb.Responses.TvSeries;
 
 namespace WatchBook.Infrastructure.Services.Interfaces;
 
@@ -10,16 +8,16 @@ namespace WatchBook.Infrastructure.Services.Interfaces;
 public interface IContentImportService
 {
     /// <summary>
-    /// Imports a movie together with its credits.
+    /// Imports a movie using its TMDb identifier.
     /// </summary>
     Task<Content> ImportMovieAsync(
         int tmdbId,
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Imports a TV series.
+    /// Imports a TV series using its TMDb identifier.
     /// </summary>
     Task<Content> ImportTvSeriesAsync(
-        TvSeriesDetailsResponse response,
+        int tmdbId,
         CancellationToken cancellationToken = default);
 }

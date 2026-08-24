@@ -27,7 +27,11 @@ public static class TvSeriesMapper
 
             BackdropPath = response.BackdropPath,
 
-            ReleaseDate = response.FirstAirDate,
+            ReleaseDate = DateOnly.TryParse(
+    response.FirstAirDate,
+    out var releaseDate)
+        ? releaseDate
+        : null,
 
             Popularity = response.Popularity,
 

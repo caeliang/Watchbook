@@ -63,8 +63,6 @@ public sealed class PersonSyncService
         // Note: PersonDetailsResponse also has Gender, Homepage, ImdbId, KnownForDepartment,
         // but the Person entity does not currently store these fields
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
         return person;
     }
 
@@ -102,8 +100,6 @@ public sealed class PersonSyncService
         // Note: Cast responses don't include Gender, Adult, Popularity fields
         // Only update what's available
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
         return person;
     }
 
@@ -140,8 +136,6 @@ public sealed class PersonSyncService
         person.ProfilePath = response.ProfilePath;
         // Note: Crew responses don't include Gender, Adult, Popularity fields
         // Only update what's available
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
 
         return person;
     }

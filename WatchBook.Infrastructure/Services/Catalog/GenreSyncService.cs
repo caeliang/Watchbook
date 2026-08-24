@@ -42,15 +42,9 @@ public sealed class GenreSyncService
             IsActive = true
         };
 
-
         await _dbContext.Genres.AddAsync(
             genre,
             cancellationToken);
-
-
-        await _dbContext.SaveChangesAsync(
-            cancellationToken);
-
 
         return genre;
     }

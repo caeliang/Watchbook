@@ -57,4 +57,8 @@ public interface ITvSeriesClient
         int seasonNumber,
         int episodeNumber,
         CancellationToken cancellationToken = default);
+    Task<TvSeasonDetailsResponse> GetSeasonDetailsAsync(
+    int tvId,
+    int seasonNumber,
+    CancellationToken cancellationToken = default);
 }

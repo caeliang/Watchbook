@@ -36,10 +36,10 @@ public sealed class TvSeriesDetailsResponse
     public string OriginalLanguage { get; init; } = string.Empty;
 
     [JsonPropertyName("first_air_date")]
-    public DateOnly? FirstAirDate { get; init; }
+    public string? FirstAirDate { get; init; }
 
     [JsonPropertyName("last_air_date")]
-    public DateOnly? LastAirDate { get; init; }
+    public string? LastAirDate { get; init; }
 
     [JsonPropertyName("number_of_seasons")]
     public int NumberOfSeasons { get; init; }

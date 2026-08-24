@@ -1,21 +1,22 @@
+using WatchBook.Exceptions;
 using WatchBook.Infrastructure;
-using WatchBook.Infrastructure.Persistence;
-using WatchBook.Infrastructure.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// MVC
 builder.Services.AddControllersWithViews();
 
-// Infrastructure
+builder.Services.AddProblemDetails();
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-// HTTP pipeline
+app.UseExceptionHandler();
+
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
@@ -32,6 +33,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();

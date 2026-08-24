@@ -69,7 +69,7 @@ public static class DependencyInjection
         services.AddSingleton<IImageUrlBuilder, ImageUrlBuilder>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<ISlugGenerator, SlugGenerator>();
-
+        services.AddScoped<NetworkSyncService>();
         services.AddHttpContextAccessor();
 
         services.AddScoped<ICurrentUserService, CurrentUserService>();

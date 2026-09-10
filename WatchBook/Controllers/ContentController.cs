@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WatchBook.Application.Interfaces;
+using WatchBook.Infrastructure.Services;
 using WatchBook.Infrastructure.Services.Interfaces;
 using WatchBook.Web.Models.Content;
 
-namespace WatchBook.Controllers;
+namespace WatchBook.Web.Controllers;
 
 [ApiController]
 [Route("api/content")]
 public sealed class ContentController(
-    IContentImportService contentImportService) : ControllerBase
+    IContentImportService contentImportService,
+    IContentQueryService contentQueryService) : ControllerBase
 {
     [HttpPost("import/movie/{tmdbId:int}")]
     public async Task<IActionResult> ImportMovie(
@@ -61,5 +64,33 @@ public sealed class ContentController(
             TmdbId = content.TmdbId,
             Title = content.Title
         });
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        if (id <= 0)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Invalid content ID",
+                detail: "Content ID must be greater than zero.");
+        }
+
+        var content = await contentQueryService.GetByIdAsync(
+            id,
+            cancellationToken);
+
+        if (content is null)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "Content not found",
+                detail: $"No content was found with ID {id}.");
+        }
+
+        return Ok(content);
     }
 }

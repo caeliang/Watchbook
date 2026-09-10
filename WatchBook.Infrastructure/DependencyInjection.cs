@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using WatchBook.Application.Interfaces;
 using WatchBook.Infrastructure.External.TMDb.Clients;
 using WatchBook.Infrastructure.External.TMDb.Extensions;
 using WatchBook.Infrastructure.External.TMDb.Handlers;
@@ -11,9 +12,10 @@ using WatchBook.Infrastructure.Identity;
 using WatchBook.Infrastructure.Identity.Configurations;
 using WatchBook.Infrastructure.Persistence;
 using WatchBook.Infrastructure.Services;
-using WatchBook.Infrastructure.Services.Interfaces;
 using WatchBook.Infrastructure.Services.Catalog;
 using WatchBook.Infrastructure.Services.Import;
+using WatchBook.Infrastructure.Services.Interfaces;
+
 namespace WatchBook.Infrastructure;
 
 public static class DependencyInjection
@@ -66,22 +68,32 @@ public static class DependencyInjection
         services.AddTmdbClient<ISearchClient, SearchClient>();
         services.AddTmdbClient<IPersonClient, PersonClient>();
         services.AddTmdbClient<IDiscoverClient, DiscoverClient>();
+
         services.AddSingleton<IImageUrlBuilder, ImageUrlBuilder>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<ISlugGenerator, SlugGenerator>();
+
+        // Catalog synchronization
         services.AddScoped<NetworkSyncService>();
         services.AddScoped<SeasonSyncService>();
         services.AddScoped<EpisodeSyncService>();
-        services.AddHttpContextAccessor();
-        services.AddScoped<MovieImportService>();
-        services.AddScoped<TvSeriesImportService>();
-        services.AddScoped<IContentImportService, ContentImportService>();
-        services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<GenreSyncService>();
         services.AddScoped<CompanySyncService>();
         services.AddScoped<CountrySyncService>();
         services.AddScoped<PersonSyncService>();
-        services.AddScoped<ContentImportService>();
+        services.AddScoped<ContentPersonSyncService>();
+
+        // Import
+        services.AddHttpContextAccessor();
+        services.AddScoped<MovieImportService>();
+        services.AddScoped<TvSeriesImportService>();
+        services.AddScoped<IContentImportService, ContentImportService>();
+
+        // Application services
+        services.AddScoped<IContentQueryService, ContentQueryService>();
+
+        // Current user
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         return services;
     }

@@ -27,80 +27,103 @@ public sealed class TvSeriesImportService(
                 x => x.TmdbId == tmdbId,
                 cancellationToken);
 
-        if (existingContent is not null)
-        {
-            return existingContent;
-        }
+        var isNewContent = existingContent is null;
 
         var response = await tvSeriesClient.GetDetailsAsync(
             tmdbId,
             cancellationToken);
 
-        var content = TvSeriesMapper.ToEntity(response);
+        var content = existingContent
+            ?? TvSeriesMapper.ToEntity(response);
 
-        foreach (var genreResponse in response.Genres)
+        if (isNewContent)
         {
-            var genre = await genreSyncService.SyncAsync(
-                genreResponse,
-                cancellationToken);
-
-            content.ContentGenres.Add(new ContentGenre
+            foreach (var genreResponse in response.Genres)
             {
-                Genre = genre
-            });
+                var genre = await genreSyncService.SyncAsync(
+                    genreResponse,
+                    cancellationToken);
+
+                content.ContentGenres.Add(new ContentGenre
+                {
+                    Genre = genre
+                });
+            }
+
+            foreach (var companyResponse in response.ProductionCompanies)
+            {
+                var company = await companySyncService.SyncAsync(
+                    companyResponse,
+                    cancellationToken);
+
+                content.ContentCompanies.Add(new ContentCompany
+                {
+                    Company = company
+                });
+            }
+
+            foreach (var countryResponse in response.ProductionCountries)
+            {
+                var country = await countrySyncService.SyncAsync(
+                    countryResponse,
+                    cancellationToken);
+
+                content.ContentCountries.Add(new ContentCountry
+                {
+                    Country = country
+                });
+            }
+
+            foreach (var networkResponse in response.Networks)
+            {
+                var network = await networkSyncService.SyncAsync(
+                    networkResponse,
+                    cancellationToken);
+
+                content.ContentNetworks.Add(new ContentNetwork
+                {
+                    Network = network
+                });
+            }
         }
 
-        foreach (var companyResponse in response.ProductionCompanies)
-        {
-            var company = await companySyncService.SyncAsync(
-                companyResponse,
-                cancellationToken);
+        var existingSeasonTmdbIds = isNewContent
+            ? []
+            : await dbContext.Seasons
+                .Where(season => season.ContentId == content.Id)
+                .Select(season => season.TmdbId)
+                .ToHashSetAsync(cancellationToken);
 
-            content.ContentCompanies.Add(new ContentCompany
-            {
-                Company = company
-            });
-        }
-
-        foreach (var countryResponse in response.ProductionCountries)
-        {
-            var country = await countrySyncService.SyncAsync(
-                countryResponse,
-                cancellationToken);
-
-            content.ContentCountries.Add(new ContentCountry
-            {
-                Country = country
-            });
-        }
-
-        foreach (var networkResponse in response.Networks)
-        {
-            var network = await networkSyncService.SyncAsync(
-                networkResponse,
-                cancellationToken);
-
-            content.ContentNetworks.Add(new ContentNetwork
-            {
-                Network = network
-            });
-        }
-
-        foreach (var seasonNumber in Enumerable.Range(
-                     1,
-                     response.NumberOfSeasons))
+        for (var seasonNumber = 1;
+             seasonNumber <= response.NumberOfSeasons;
+             seasonNumber++)
         {
             var seasonResponse = await tvSeriesClient.GetSeasonDetailsAsync(
                 response.Id,
                 seasonNumber,
                 cancellationToken);
 
-            var season = await seasonSyncService.SyncAsync(
-                content,
-                seasonResponse,
-                cancellationToken);
+            Season season;
 
-            content.Seasons.Add(season);
+            if (existingSeasonTmdbIds.Contains(seasonResponse.Id))
+            {
+                season = await dbContext.Seasons
+                    .FirstAsync(
+                        x => x.ContentId == content.Id
+                             && x.TmdbId == seasonResponse.Id,
+                        cancellationToken);
+            }
+            else
+            {
+                season = await seasonSyncService.SyncAsync(
+                    content,
+                    seasonResponse,
+                    cancellationToken);
+
+                content.Seasons.Add(season);
+
+                existingSeasonTmdbIds.Add(seasonResponse.Id);
+            }
 
             foreach (var episodeResponse in seasonResponse.Episodes)
             {
@@ -109,11 +132,17 @@ public sealed class TvSeriesImportService(
                     episodeResponse,
                     cancellationToken);
 
-                season.Episodes.Add(episode);
+                if (episode.Season != season)
+                {
+                    season.Episodes.Add(episode);
+                }
             }
         }
 
-        dbContext.Contents.Add(content);
+        if (isNewContent)
+        {
+            dbContext.Contents.Add(content);
+        }
 
         return content;
     }

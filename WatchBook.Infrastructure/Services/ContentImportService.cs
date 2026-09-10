@@ -1,8 +1,9 @@
+
 using Microsoft.EntityFrameworkCore;
 using WatchBook.Domain.Entities.Catalog;
 using WatchBook.Infrastructure.Persistence;
-using WatchBook.Infrastructure.Services.Interfaces;
 using WatchBook.Infrastructure.Services.Import;
+using WatchBook.Infrastructure.Services.Interfaces;
 
 namespace WatchBook.Infrastructure.Services;
 
@@ -52,16 +53,6 @@ public sealed class ContentImportService(
         int tmdbId,
         CancellationToken cancellationToken = default)
     {
-        var existingContent = await dbContext.Contents
-            .FirstOrDefaultAsync(
-                x => x.TmdbId == tmdbId,
-                cancellationToken);
-
-        if (existingContent is not null)
-        {
-            return existingContent;
-        }
-
         await using var transaction =
             await dbContext.Database.BeginTransactionAsync(
                 cancellationToken);

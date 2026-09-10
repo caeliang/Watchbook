@@ -28,6 +28,7 @@
 </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WatchBook.Domain\WatchBook.Domain.csproj" />
+    <ProjectReference Include="..\WatchBook.Application\WatchBook.Application.csproj" />
   </ItemGroup>
 
 </Project>

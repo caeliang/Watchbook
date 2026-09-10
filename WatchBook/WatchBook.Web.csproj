@@ -18,4 +18,8 @@
     <ProjectReference Include="..\WatchBook.Infrastructure\WatchBook.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WatchBook.Application\WatchBook.Application.csproj" />
+  </ItemGroup>
+
 </Project>

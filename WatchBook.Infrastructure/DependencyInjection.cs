@@ -95,6 +95,11 @@ public static class DependencyInjection
         // Current user
         services.AddScoped<ICurrentUserService, CurrentUserService>();
 
+        // Auth
+        services.AddScoped<IAuthService, AuthService>();
+
+
+        services.AddScoped<IWatchlistService, WatchlistService>();
         return services;
     }
 }

@@ -1,77 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WatchBook.Application.Interfaces;
-using WatchBook.Infrastructure.Services;
 using WatchBook.Infrastructure.Services.Interfaces;
-using WatchBook.Web.Models.Content;
 
 namespace WatchBook.Web.Controllers;
 
 [ApiController]
-[Route("api/content")]
-public sealed class ContentController(
-    IContentImportService contentImportService,
-    IContentQueryService contentQueryService) : ControllerBase
+[Authorize]
+[Route("api/watchlist")]
+public sealed class WatchlistController(
+    IWatchlistService watchlistService,
+    ICurrentUserService currentUserService) : ControllerBase
 {
-    [HttpPost("import/movie/{tmdbId:int}")]
-    public async Task<IActionResult> ImportMovie(
-        int tmdbId,
+    [HttpPost("{contentId:int}")]
+    public async Task<IActionResult> Add(
+        int contentId,
         CancellationToken cancellationToken)
     {
-        if (tmdbId <= 0)
-        {
-            return Problem(
-                statusCode: StatusCodes.Status400BadRequest,
-                title: "Invalid TMDb ID",
-                detail: "TMDb ID must be greater than zero.");
-        }
-
-        var content = await contentImportService.ImportMovieAsync(
-            tmdbId,
-            cancellationToken);
-
-        return Ok(new ContentImportResponse
-        {
-            Success = true,
-            Message = "Movie imported and saved successfully.",
-            ContentId = content.Id,
-            TmdbId = content.TmdbId,
-            Title = content.Title
-        });
-    }
-
-    [HttpPost("import/tv/{tmdbId:int}")]
-    public async Task<IActionResult> ImportTvSeries(
-        int tmdbId,
-        CancellationToken cancellationToken)
-    {
-        if (tmdbId <= 0)
-        {
-            return Problem(
-                statusCode: StatusCodes.Status400BadRequest,
-                title: "Invalid TMDb ID",
-                detail: "TMDb ID must be greater than zero.");
-        }
-
-        var content = await contentImportService.ImportTvSeriesAsync(
-            tmdbId,
-            cancellationToken);
-
-        return Ok(new ContentImportResponse
-        {
-            Success = true,
-            Message = "TV series imported and saved successfully.",
-            ContentId = content.Id,
-            TmdbId = content.TmdbId,
-            Title = content.Title
-        });
-    }
-
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(
-        int id,
-        CancellationToken cancellationToken)
-    {
-        if (id <= 0)
+        if (contentId <= 0)
         {
             return Problem(
                 statusCode: StatusCodes.Status400BadRequest,
@@ -79,18 +25,82 @@ public sealed class ContentController(
                 detail: "Content ID must be greater than zero.");
         }
 
-        var content = await contentQueryService.GetByIdAsync(
-            id,
-            cancellationToken);
-
-        if (content is null)
+        if (!currentUserService.IsAuthenticated
+            || string.IsNullOrWhiteSpace(currentUserService.UserId))
         {
-            return Problem(
-                statusCode: StatusCodes.Status404NotFound,
-                title: "Content not found",
-                detail: $"No content was found with ID {id}.");
+            return Unauthorized();
         }
 
-        return Ok(content);
+        await watchlistService.AddAsync(
+            currentUserService.UserId,
+            contentId,
+            cancellationToken);
+
+        return Ok(new
+        {
+            Success = true,
+            Message = "Content added to watchlist successfully."
+        });
+    }
+
+    [HttpDelete("{contentId:int}")]
+    public async Task<IActionResult> Remove(
+        int contentId,
+        CancellationToken cancellationToken)
+    {
+        if (contentId <= 0)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Invalid content ID",
+                detail: "Content ID must be greater than zero.");
+        }
+
+        if (!currentUserService.IsAuthenticated
+            || string.IsNullOrWhiteSpace(currentUserService.UserId))
+        {
+            return Unauthorized();
+        }
+
+        await watchlistService.RemoveAsync(
+            currentUserService.UserId,
+            contentId,
+            cancellationToken);
+
+        return Ok(new
+        {
+            Success = true,
+            Message = "Content removed from watchlist successfully."
+        });
+    }
+
+    [HttpGet("{contentId:int}")]
+    public async Task<IActionResult> Exists(
+        int contentId,
+        CancellationToken cancellationToken)
+    {
+        if (contentId <= 0)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Invalid content ID",
+                detail: "Content ID must be greater than zero.");
+        }
+
+        if (!currentUserService.IsAuthenticated
+            || string.IsNullOrWhiteSpace(currentUserService.UserId))
+        {
+            return Unauthorized();
+        }
+
+        var exists = await watchlistService.ExistsAsync(
+            currentUserService.UserId,
+            contentId,
+            cancellationToken);
+
+        return Ok(new
+        {
+            InWatchlist = exists
+        });
     }
 }

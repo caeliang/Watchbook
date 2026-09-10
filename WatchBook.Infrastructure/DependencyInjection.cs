@@ -91,6 +91,7 @@ public static class DependencyInjection
 
         // Application services
         services.AddScoped<IContentQueryService, ContentQueryService>();
+        services.AddScoped<IWatchlistService, WatchlistService>();
 
         // Current user
         services.AddScoped<ICurrentUserService, CurrentUserService>();

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WatchBook.Domain.Entities.Catalog;
 using WatchBook.Domain.Entities.Relations;
+using WatchBook.Domain.Entities.User;
 using WatchBook.Infrastructure.Identity;
 
 namespace WatchBook.Infrastructure.Persistence;
@@ -11,13 +12,15 @@ namespace WatchBook.Infrastructure.Persistence;
 /// and all domain entities for catalog, relations, and user-generated content.
 /// All entities share a single SQL Server database.
 /// </summary>
-public class WatchBookDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+public class WatchBookDbContext
+    : IdentityDbContext<ApplicationUser, ApplicationRole, string>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="WatchBookDbContext"/> class.
     /// </summary>
     /// <param name="options">The <see cref="DbContextOptions{WatchBookDbContext}"/>.</param>
-    public WatchBookDbContext(DbContextOptions<WatchBookDbContext> options)
+    public WatchBookDbContext(
+        DbContextOptions<WatchBookDbContext> options)
         : base(options)
     {
     }
@@ -95,6 +98,15 @@ public class WatchBookDbContext : IdentityDbContext<ApplicationUser, Application
 
     #endregion
 
+    #region User DbSets
+
+    /// <summary>
+    /// Gets or sets the collection of user watchlist entries.
+    /// </summary>
+    public DbSet<Watchlist> Watchlists { get; set; }
+
+    #endregion
+
     /// <summary>
     /// Configures the model for the database using Fluent API.
     /// Applies all entity type configurations from this assembly.
@@ -103,9 +115,10 @@ public class WatchBookDbContext : IdentityDbContext<ApplicationUser, Application
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<Content>()
-    .HasIndex(x => x.TmdbId)
-    .IsUnique();
+            .HasIndex(x => x.TmdbId)
+            .IsUnique();
 
         modelBuilder.Entity<Season>()
             .HasIndex(x => x.TmdbId)
@@ -114,7 +127,23 @@ public class WatchBookDbContext : IdentityDbContext<ApplicationUser, Application
         modelBuilder.Entity<Episode>()
             .HasIndex(x => x.TmdbId)
             .IsUnique();
-        // Apply all IEntityTypeConfiguration<T> configurations from this assembly
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(WatchBookDbContext).Assembly);
+
+        modelBuilder.Entity<Watchlist>()
+            .HasIndex(x => new
+            {
+                x.UserId,
+                x.ContentId
+            })
+            .IsUnique();
+
+        modelBuilder.Entity<Watchlist>()
+            .HasOne(x => x.Content)
+            .WithMany()
+            .HasForeignKey(x => x.ContentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Apply all IEntityTypeConfiguration<T> configurations from this assembly.
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(WatchBookDbContext).Assembly);
     }
 }

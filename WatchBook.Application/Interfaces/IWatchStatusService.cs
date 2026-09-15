@@ -1,4 +1,4 @@
-﻿using WatchBook.Domain.Enums;
+﻿using WatchBook.Domain.Features.UserContent.Enums;
 
 namespace WatchBook.Application.Interfaces;
 

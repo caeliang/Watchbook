@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WatchBook.Application.Interfaces;
-using WatchBook.Domain.Entities.User;
 using WatchBook.Infrastructure.Persistence;
-
+using WatchBook.Domain.Features.UserContent.Entities;
 namespace WatchBook.Infrastructure.Services;
 
 public sealed class FavoriteService(

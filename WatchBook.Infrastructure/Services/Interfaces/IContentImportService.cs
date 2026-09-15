@@ -1,4 +1,4 @@
-﻿using WatchBook.Domain.Entities.Catalog;
+﻿using WatchBook.Domain.Features.Catalog.Entities;
 
 namespace WatchBook.Infrastructure.Services.Interfaces;
 

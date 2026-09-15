@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WatchBook.Application.Interfaces;
-using WatchBook.Domain.Entities.User;
-using WatchBook.Domain.Enums;
+using WatchBook.Domain.Features.UserContent.Entities;
+using WatchBook.Domain.Features.UserContent.Enums;
 using WatchBook.Infrastructure.Persistence;
 
 namespace WatchBook.Infrastructure.Services;

@@ -1,4 +1,4 @@
-﻿using WatchBook.Domain.Entities.Catalog;
+﻿using WatchBook.Domain.Features.Catalog.Entities;
 using WatchBook.Infrastructure.External.TMDb.Responses.Movies;
 
 namespace WatchBook.Infrastructure.External.TMDb.Mapping;

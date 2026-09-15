@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WatchBook.Application.DTOs;
-using WatchBook.Application.Interfaces;
+using WatchBook.Application.Features;
+using WatchBook.Application.Features.Catalog.DTOs;
+using WatchBook.Application.Features.Catalog.Interfaces;
 using WatchBook.Infrastructure.Persistence;
 
 namespace WatchBook.Infrastructure.Features.Catalog.Movie.Services;

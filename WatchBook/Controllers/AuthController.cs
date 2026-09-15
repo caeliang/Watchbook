@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WatchBook.Application.Interfaces;
+using WatchBook.Application.Features.Authentication.Services;
 
 namespace WatchBook.Web.Controllers;
 

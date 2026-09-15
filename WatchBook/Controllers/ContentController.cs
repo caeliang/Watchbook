@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WatchBook.Application.Interfaces;
+using WatchBook.Application.Features.Catalog.Interfaces;
 using WatchBook.Infrastructure.Features.Catalog.Movie.Interfaces;
-using WatchBook.Infrastructure.Services;
+using WatchBook.Infrastructure.Features.Catalog.Movie.Services;
 using WatchBook.Web.Models.Content;
 
 namespace WatchBook.Web.Controllers;

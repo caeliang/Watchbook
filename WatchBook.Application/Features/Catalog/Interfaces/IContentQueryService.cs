@@ -1,6 +1,6 @@
-﻿using WatchBook.Application.DTOs;
+﻿using WatchBook.Application.Features.Catalog.DTOs;
 
-namespace WatchBook.Application.Interfaces;
+namespace WatchBook.Application.Features.Catalog.Interfaces;
 
 public interface IContentQueryService
 {

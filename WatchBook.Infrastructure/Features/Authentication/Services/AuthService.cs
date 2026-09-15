@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using WatchBook.Application.Interfaces;
+using WatchBook.Application.Features.Authentication.Services;
 using WatchBook.Infrastructure.Features.Authentication.Identity;
 
 namespace WatchBook.Infrastructure.Features.Authentication.Services;

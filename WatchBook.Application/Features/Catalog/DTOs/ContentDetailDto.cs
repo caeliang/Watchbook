@@ -1,6 +1,6 @@
 ﻿using WatchBook.Domain.Features.Catalog.Enums;
 
-namespace WatchBook.Application.DTOs;
+namespace WatchBook.Application.Features.Catalog.DTOs;
 
 public sealed class ContentDetailDto
 {

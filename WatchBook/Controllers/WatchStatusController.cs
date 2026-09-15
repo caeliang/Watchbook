@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using WatchBook.Application.Interfaces;
 using WatchBook.Domain.Features.UserContent.Enums;
+using WatchBook.Infrastructure.Features.System.Interfaces;
 using WatchBook.Infrastructure.Services;
-using WatchBook.Infrastructure.Services.Interfaces;
 
 namespace WatchBook.Web.Controllers;
 

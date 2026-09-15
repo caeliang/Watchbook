@@ -15,6 +15,7 @@ public sealed class WatchHistoryController(
     [HttpPost("{contentId:int}")]
     public async Task<IActionResult> Add(
         int contentId,
+        [FromBody] AddWatchHistoryRequest? request,
         CancellationToken cancellationToken)
     {
         if (contentId <= 0)
@@ -34,12 +35,16 @@ public sealed class WatchHistoryController(
         await watchHistoryService.AddAsync(
             currentUserService.UserId,
             contentId,
+            request?.EpisodeId,
+            request?.Rating,
             cancellationToken);
 
         return Ok(new
         {
             Success = true,
-            Message = "Content added to watch history successfully."
+            Message = "Content added to watch history successfully.",
+            EpisodeId = request?.EpisodeId,
+            Rating = request?.Rating
         });
     }
 
@@ -90,4 +95,8 @@ public sealed class WatchHistoryController(
             Message = "Watch history entry removed successfully."
         });
     }
+
+    public sealed record AddWatchHistoryRequest(
+        int? EpisodeId,
+        decimal? Rating);
 }

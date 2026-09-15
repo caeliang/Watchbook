@@ -5,6 +5,8 @@ public interface IWatchHistoryService
     Task AddAsync(
         string userId,
         int contentId,
+        int? episodeId,
+        decimal? rating,
         CancellationToken cancellationToken = default);
 
     Task RemoveAsync(
@@ -20,5 +22,10 @@ public interface IWatchHistoryService
 public sealed record WatchHistoryItem(
     int Id,
     int ContentId,
+    int? EpisodeId,
     string Title,
-    DateTime WatchedAt);
+    int? SeasonNumber,
+    int? EpisodeNumber,
+    string? EpisodeName,
+    DateTime WatchedAt,
+    decimal? Rating);

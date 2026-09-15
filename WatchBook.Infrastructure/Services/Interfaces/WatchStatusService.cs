@@ -62,17 +62,6 @@ public sealed class WatchStatusService(
             {
                 dbContext.Watchlists.Remove(watchlistItem);
             }
-
-            var watchHistory = new WatchHistory
-            {
-                UserId = userId,
-                ContentId = contentId,
-                WatchedAt = DateTime.UtcNow
-            };
-
-            await dbContext.WatchHistories.AddAsync(
-                watchHistory,
-                cancellationToken);
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);

@@ -95,17 +95,26 @@ public class WatchBookDbContext
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<WatchHistory>()
-            .HasIndex(x => new
-            {
-                x.UserId,
-                x.WatchedAt
-            });
+    .HasIndex(x => new
+    {
+        x.UserId,
+        x.WatchedAt
+    });
 
         modelBuilder.Entity<WatchHistory>()
             .HasOne(x => x.Content)
             .WithMany()
             .HasForeignKey(x => x.ContentId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<WatchHistory>()
+            .HasOne(x => x.Episode)
+            .WithMany()
+            .HasForeignKey(x => x.EpisodeId)
+            .OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<WatchHistory>()
+            .Property(x => x.Rating)
+            .HasPrecision(2, 1);
 
         modelBuilder.ApplyConfigurationsFromAssembly(
             typeof(WatchBookDbContext).Assembly);

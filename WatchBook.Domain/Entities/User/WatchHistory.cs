@@ -9,7 +9,13 @@ public class WatchHistory : BaseEntity
 
     public int ContentId { get; set; }
 
+    public int? EpisodeId { get; set; }
+
     public DateTime WatchedAt { get; set; } = DateTime.UtcNow;
 
+    public decimal? Rating { get; set; }
+
     public Content Content { get; set; } = null!;
+
+    public Episode? Episode { get; set; }
 }

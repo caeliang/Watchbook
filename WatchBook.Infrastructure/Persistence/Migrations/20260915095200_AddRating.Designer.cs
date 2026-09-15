@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WatchBook.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using WatchBook.Infrastructure.Persistence;
 namespace WatchBook.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(WatchBookDbContext))]
-    partial class WatchBookDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260915095200_AddRating")]
+    partial class AddRating
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -783,13 +786,6 @@ namespace WatchBook.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EpisodeId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("Rating")
-                        .HasPrecision(2, 1)
-                        .HasColumnType("decimal(2,1)");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -803,8 +799,6 @@ namespace WatchBook.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ContentId");
-
-                    b.HasIndex("EpisodeId");
 
                     b.HasIndex("UserId", "WatchedAt");
 
@@ -1185,14 +1179,7 @@ namespace WatchBook.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WatchBook.Domain.Entities.Catalog.Episode", "Episode")
-                        .WithMany()
-                        .HasForeignKey("EpisodeId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.Navigation("Content");
-
-                    b.Navigation("Episode");
                 });
 
             modelBuilder.Entity("WatchBook.Domain.Entities.User.WatchStatus", b =>

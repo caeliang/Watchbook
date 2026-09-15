@@ -107,6 +107,8 @@ public static class DependencyInjection
         services.AddScoped<IWatchStatusService, WatchStatusService>();
 
         services.AddScoped<IWatchHistoryService, WatchHistoryService>();
+
+        services.AddScoped<IContentRatingService, ContentRatingService>();
         return services;
     }
 }

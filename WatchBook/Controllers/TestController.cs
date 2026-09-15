@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WatchBook.Infrastructure.Services.Interfaces;
+using WatchBook.Infrastructure.Features.Catalog.Movie.Interfaces;
 
 namespace WatchBook.Web.Controllers;
 

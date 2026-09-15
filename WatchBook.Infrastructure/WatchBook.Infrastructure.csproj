@@ -9,6 +9,7 @@
   <ItemGroup>
     <Folder Include="External\TMDb\DTOs\" />
     <Folder Include="External\TMDb\Services\" />
+    <Folder Include="Features\Social\" />
   </ItemGroup>
 
   <ItemGroup>

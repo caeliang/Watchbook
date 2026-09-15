@@ -8,13 +8,17 @@ using WatchBook.Infrastructure.External.TMDb.Extensions;
 using WatchBook.Infrastructure.External.TMDb.Handlers;
 using WatchBook.Infrastructure.External.TMDb.Interfaces;
 using WatchBook.Infrastructure.External.TMDb.Options;
-using WatchBook.Infrastructure.Identity;
-using WatchBook.Infrastructure.Identity.Configurations;
+using WatchBook.Infrastructure.Features.Authentication.Configurations;
+using WatchBook.Infrastructure.Features.Authentication.Identity;
+using WatchBook.Infrastructure.Features.Authentication.Services;
+using WatchBook.Infrastructure.Features.Catalog.Movie.Interfaces;
+using WatchBook.Infrastructure.Features.Catalog.Movie.Services;
+using WatchBook.Infrastructure.Features.Catalog.Shared.Services;
+using WatchBook.Infrastructure.Features.Catalog.TvSeries.Services;
+using WatchBook.Infrastructure.Features.System.Interfaces;
+using WatchBook.Infrastructure.Features.System.Services;
+using WatchBook.Infrastructure.Features.UserContent.Services;
 using WatchBook.Infrastructure.Persistence;
-using WatchBook.Infrastructure.Services;
-using WatchBook.Infrastructure.Services.Catalog;
-using WatchBook.Infrastructure.Services.Import;
-using WatchBook.Infrastructure.Services.Interfaces;
 
 namespace WatchBook.Infrastructure;
 

@@ -1,5 +1,5 @@
 ﻿using WatchBook.Domain.Enums.Discovery;
-using WatchBook.Infrastructure.External.TMDb.Clients.Base;
+using WatchBook.Infrastructure.External.TMDb.Base;
 using WatchBook.Infrastructure.External.TMDb.Interfaces;
 using WatchBook.Infrastructure.External.TMDb.Responses.Trending;
 

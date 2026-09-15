@@ -103,6 +103,8 @@ public static class DependencyInjection
         services.AddScoped<IWatchlistService, WatchlistService>();
 
         services.AddScoped<IFavoriteService, FavoriteService>();
+
+        services.AddScoped<IWatchStatusService, WatchStatusService>();
         return services;
     }
 }

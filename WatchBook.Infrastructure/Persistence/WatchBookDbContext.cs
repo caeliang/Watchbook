@@ -33,6 +33,7 @@ public class WatchBookDbContext
 
     public DbSet<Watchlist> Watchlists { get; set; }
     public DbSet<Favorite> Favorites { get; set; }
+    public DbSet<WatchStatus> WatchStatuses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -73,6 +74,20 @@ public class WatchBookDbContext
             .IsUnique();
 
         modelBuilder.Entity<Favorite>()
+            .HasOne(x => x.Content)
+            .WithMany()
+            .HasForeignKey(x => x.ContentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<WatchStatus>()
+            .HasIndex(x => new
+            {
+                x.UserId,
+                x.ContentId
+            })
+            .IsUnique();
+
+        modelBuilder.Entity<WatchStatus>()
             .HasOne(x => x.Content)
             .WithMany()
             .HasForeignKey(x => x.ContentId)

@@ -2,9 +2,9 @@
 using WatchBook.Application.Features.Catalog.Interfaces;
 using WatchBook.Infrastructure.Features.Catalog.Movie.Interfaces;
 using WatchBook.Infrastructure.Features.Catalog.Movie.Services;
-using WatchBook.Web.Models.Content;
+using WatchBook.Web.Features.Catalog.Import;
 
-namespace WatchBook.Web.Controllers;
+namespace WatchBook.Web.Features.Catalog.Movie.Controllers;
 
 [ApiController]
 [Route("api/content")]

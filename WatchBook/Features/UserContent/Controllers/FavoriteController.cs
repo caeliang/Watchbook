@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WatchBook.Application.Features.UserContent.Services;
 using WatchBook.Infrastructure.Features.System.Interfaces;
 
-namespace WatchBook.Web.Controllers;
+namespace WatchBook.Web.Features.UserContent.Controllers;
 
 [ApiController]
 [Authorize]

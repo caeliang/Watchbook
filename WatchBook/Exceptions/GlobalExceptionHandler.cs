@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WatchBook.Exceptions;
+namespace WatchBook.Web.Exceptions;
 
 public sealed class GlobalExceptionHandler(
     IProblemDetailsService problemDetailsService,

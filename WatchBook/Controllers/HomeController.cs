@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using WatchBook.Models;
+using WatchBook.Web.Models;
 
-namespace WatchBook.Controllers
+namespace WatchBook.Web.Controllers
 {
     public class HomeController : Controller
     {

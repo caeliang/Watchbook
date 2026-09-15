@@ -1,5 +1,5 @@
-using WatchBook.Exceptions;
 using WatchBook.Infrastructure;
+using WatchBook.Web.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 

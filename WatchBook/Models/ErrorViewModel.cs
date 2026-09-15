@@ -1,4 +1,4 @@
-namespace WatchBook.Models
+namespace WatchBook.Web.Models
 {
     public class ErrorViewModel
     {

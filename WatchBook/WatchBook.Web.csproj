@@ -22,4 +22,20 @@
     <ProjectReference Include="..\WatchBook.Application\WatchBook.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Authentication\Models\" />
+    <Folder Include="Features\Authentication\Views\" />
+    <Folder Include="Features\Catalog\Movie\Models\" />
+    <Folder Include="Features\Catalog\Movie\Views\" />
+    <Folder Include="Features\Catalog\TvSeries\Controllers\" />
+    <Folder Include="Features\Catalog\TvSeries\Models\" />
+    <Folder Include="Features\Catalog\TvSeries\Views\" />
+    <Folder Include="Features\Social\Controllers\" />
+    <Folder Include="Features\Social\Models\" />
+    <Folder Include="Features\Social\Views\" />
+    <Folder Include="Features\UserContent\Models\" />
+    <Folder Include="Features\UserContent\Views\" />
+    <Folder Include="System\" />
+  </ItemGroup>
+
 </Project>

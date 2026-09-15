@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WatchBook.Application.Features.Authentication.Services;
 
-namespace WatchBook.Web.Controllers;
+namespace WatchBook.Web.Features.Authentication.Controllers;
 
 [ApiController]
 [Route("api/auth")]

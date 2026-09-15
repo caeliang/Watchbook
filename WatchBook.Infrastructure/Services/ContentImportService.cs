@@ -1,6 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
-using WatchBook.Domain.Entities.Catalog;
+using WatchBook.Domain.Features.Catalog.Entities;
 using WatchBook.Infrastructure.Persistence;
 using WatchBook.Infrastructure.Services.Import;
 using WatchBook.Infrastructure.Services.Interfaces;

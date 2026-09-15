@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WatchBook.Application.Interfaces;
-using WatchBook.Domain.Enums.Content;
+using WatchBook.Domain.Features.Catalog.Enums;
 using WatchBook.Infrastructure.Persistence;
 
 namespace WatchBook.Infrastructure.Services;

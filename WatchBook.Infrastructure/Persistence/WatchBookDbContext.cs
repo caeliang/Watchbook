@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WatchBook.Domain.Entities.Catalog;
-using WatchBook.Domain.Entities.Relations;
-using WatchBook.Domain.Entities.User;
+using WatchBook.Domain.Features.Catalog.Entities;
+using WatchBook.Domain.Features.UserContent.Entities;
 using WatchBook.Infrastructure.Identity;
 
 namespace WatchBook.Infrastructure.Persistence;

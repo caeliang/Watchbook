@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WatchBook.Application.Interfaces;
-using WatchBook.Domain.Enums;
+using WatchBook.Domain.Features.UserContent.Enums;
 using WatchBook.Infrastructure.Services;
 using WatchBook.Infrastructure.Services.Interfaces;
 

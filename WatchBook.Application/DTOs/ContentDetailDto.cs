@@ -1,4 +1,6 @@
-﻿namespace WatchBook.Application.DTOs;
+﻿using WatchBook.Domain.Features.Catalog.Enums;
+
+namespace WatchBook.Application.DTOs;
 
 public sealed class ContentDetailDto
 {
@@ -6,7 +8,7 @@ public sealed class ContentDetailDto
 
     public int TmdbId { get; init; }
 
-    public WatchBook.Domain.Enums.Content.ContentType Type { get; init; }
+    public ContentType Type { get; init; }
 
     public string Title { get; init; } = string.Empty;
 
@@ -28,9 +30,9 @@ public sealed class ContentDetailDto
 
     public int VoteCount { get; init; }
 
-    public WatchBook.Domain.Enums.Content.ContentStatus Status { get; init; }
+    public ContentStatus Status { get; init; }
 
-    public WatchBook.Domain.Enums.Content.ProductionStatus ProductionStatus { get; init; }
+    public ProductionStatus ProductionStatus { get; init; }
 
     public IReadOnlyList<GenreDto> Genres { get; init; } = [];
 

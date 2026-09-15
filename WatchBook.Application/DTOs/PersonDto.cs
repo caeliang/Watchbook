@@ -1,4 +1,4 @@
-﻿using WatchBook.Domain.Enums.Content;
+﻿using WatchBook.Domain.Features.Catalog.Enums;
 
 namespace WatchBook.Application.DTOs;
 

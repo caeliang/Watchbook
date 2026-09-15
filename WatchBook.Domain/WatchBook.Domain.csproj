@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Social\Entities\" />
+    <Folder Include="Features\Social\Enums\" />
+  </ItemGroup>
+
 </Project>

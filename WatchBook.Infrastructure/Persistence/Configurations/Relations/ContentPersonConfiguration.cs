@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WatchBook.Domain.Entities.Relations;
-using WatchBook.Domain.Enums.Content;
+using WatchBook.Domain.Features.Catalog.Entities;
 
 namespace WatchBook.Infrastructure.Persistence.Configurations.Relations;
 

@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using WatchBook.Domain.Entities.Catalog;
+using WatchBook.Domain.Features.Catalog.Entities;
 using WatchBook.Infrastructure.External.TMDb.Responses.TvSeries;
 using WatchBook.Infrastructure.Persistence;
 

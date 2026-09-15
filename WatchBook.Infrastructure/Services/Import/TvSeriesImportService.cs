@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WatchBook.Domain.Entities.Catalog;
-using WatchBook.Domain.Entities.Relations;
+using WatchBook.Domain.Features.Catalog.Entities;
 using WatchBook.Infrastructure.External.TMDb.Interfaces;
 using WatchBook.Infrastructure.External.TMDb.Mapping;
 using WatchBook.Infrastructure.Persistence;

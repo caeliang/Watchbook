@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WatchBook.Domain.Entities.Catalog;
+using WatchBook.Domain.Features.Catalog.Entities;
 using WatchBook.Infrastructure.External.TMDb.Responses.Movies;
 using WatchBook.Infrastructure.External.TMDb.Responses.People;
 using WatchBook.Infrastructure.Persistence;

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WatchBook.Domain.Entities.Catalog;
-using WatchBook.Domain.Entities.Relations;
-using WatchBook.Domain.Enums.Content;
+using WatchBook.Domain.Features.Catalog.Entities;
+using WatchBook.Domain.Features.Catalog.Enums;
 using WatchBook.Infrastructure.External.TMDb.Responses.Movies;
 using WatchBook.Infrastructure.Persistence;
 

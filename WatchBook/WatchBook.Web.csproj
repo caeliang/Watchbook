@@ -35,6 +35,7 @@
     <Folder Include="Features\Social\Views\" />
     <Folder Include="Features\UserContent\Models\" />
     <Folder Include="Features\UserContent\Views\" />
+    <Folder Include="System\" />
   </ItemGroup>
 
 </Project>

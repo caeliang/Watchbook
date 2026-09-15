@@ -34,6 +34,7 @@ public class WatchBookDbContext
     public DbSet<Watchlist> Watchlists { get; set; }
     public DbSet<Favorite> Favorites { get; set; }
     public DbSet<WatchStatus> WatchStatuses { get; set; }
+    public DbSet<WatchHistory> WatchHistories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -88,6 +89,19 @@ public class WatchBookDbContext
             .IsUnique();
 
         modelBuilder.Entity<WatchStatus>()
+            .HasOne(x => x.Content)
+            .WithMany()
+            .HasForeignKey(x => x.ContentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<WatchHistory>()
+            .HasIndex(x => new
+            {
+                x.UserId,
+                x.WatchedAt
+            });
+
+        modelBuilder.Entity<WatchHistory>()
             .HasOne(x => x.Content)
             .WithMany()
             .HasForeignKey(x => x.ContentId)

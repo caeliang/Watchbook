@@ -50,6 +50,31 @@ public sealed class WatchStatusService(
             watchStatus.Status = status;
         }
 
+        if (status == WatchStatusType.Completed)
+        {
+            var watchlistItem = await dbContext.Watchlists
+                .FirstOrDefaultAsync(
+                    x => x.UserId == userId
+                         && x.ContentId == contentId,
+                    cancellationToken);
+
+            if (watchlistItem is not null)
+            {
+                dbContext.Watchlists.Remove(watchlistItem);
+            }
+
+            var watchHistory = new WatchHistory
+            {
+                UserId = userId,
+                ContentId = contentId,
+                WatchedAt = DateTime.UtcNow
+            };
+
+            await dbContext.WatchHistories.AddAsync(
+                watchHistory,
+                cancellationToken);
+        }
+
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WatchBook.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using WatchBook.Infrastructure.Persistence;
 namespace WatchBook.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(WatchBookDbContext))]
-    partial class WatchBookDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260915084033_AddWatchHistory")]
+    partial class AddWatchHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -766,42 +769,6 @@ namespace WatchBook.Infrastructure.Persistence.Migrations
                     b.ToTable("Favorites");
                 });
 
-            modelBuilder.Entity("WatchBook.Domain.Entities.User.WatchHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ContentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("WatchedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContentId");
-
-                    b.HasIndex("UserId", "WatchedAt");
-
-                    b.ToTable("WatchHistories");
-                });
-
             modelBuilder.Entity("WatchBook.Domain.Entities.User.WatchStatus", b =>
                 {
                     b.Property<int>("Id")
@@ -1158,17 +1125,6 @@ namespace WatchBook.Infrastructure.Persistence.Migrations
                 });
 
             modelBuilder.Entity("WatchBook.Domain.Entities.User.Favorite", b =>
-                {
-                    b.HasOne("WatchBook.Domain.Entities.Catalog.Content", "Content")
-                        .WithMany()
-                        .HasForeignKey("ContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Content");
-                });
-
-            modelBuilder.Entity("WatchBook.Domain.Entities.User.WatchHistory", b =>
                 {
                     b.HasOne("WatchBook.Domain.Entities.Catalog.Content", "Content")
                         .WithMany()

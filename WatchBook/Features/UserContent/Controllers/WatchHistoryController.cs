@@ -1,20 +1,21 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WatchBook.Application.Features.UserContent.Services;
 using WatchBook.Infrastructure.Features.System.Interfaces;
 
-namespace WatchBook.Web.Controllers;
+namespace WatchBook.Web.Features.UserContent.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("api/watchlist")]
-public sealed class WatchlistController(
-    IWatchlistService watchlistService,
+[Route("api/watch-history")]
+public sealed class WatchHistoryController(
+    IWatchHistoryService watchHistoryService,
     ICurrentUserService currentUserService) : ControllerBase
 {
     [HttpPost("{contentId:int}")]
     public async Task<IActionResult> Add(
         int contentId,
+        [FromBody] AddWatchHistoryRequest? request,
         CancellationToken cancellationToken)
     {
         if (contentId <= 0)
@@ -31,29 +32,50 @@ public sealed class WatchlistController(
             return Unauthorized();
         }
 
-        await watchlistService.AddAsync(
+        await watchHistoryService.AddAsync(
             currentUserService.UserId,
             contentId,
+            request?.EpisodeId,
+            request?.Rating,
             cancellationToken);
 
         return Ok(new
         {
             Success = true,
-            Message = "Content added to watchlist successfully."
+            Message = "Content added to watch history successfully.",
+            EpisodeId = request?.EpisodeId,
+            Rating = request?.Rating
         });
     }
 
-    [HttpDelete("{contentId:int}")]
+    [HttpGet]
+    public async Task<IActionResult> Get(
+        CancellationToken cancellationToken)
+    {
+        if (!currentUserService.IsAuthenticated
+            || string.IsNullOrWhiteSpace(currentUserService.UserId))
+        {
+            return Unauthorized();
+        }
+
+        var history = await watchHistoryService.GetAsync(
+            currentUserService.UserId,
+            cancellationToken);
+
+        return Ok(history);
+    }
+
+    [HttpDelete("{historyId:int}")]
     public async Task<IActionResult> Remove(
-        int contentId,
+        int historyId,
         CancellationToken cancellationToken)
     {
-        if (contentId <= 0)
+        if (historyId <= 0)
         {
             return Problem(
                 statusCode: StatusCodes.Status400BadRequest,
-                title: "Invalid content ID",
-                detail: "Content ID must be greater than zero.");
+                title: "Invalid history ID",
+                detail: "History ID must be greater than zero.");
         }
 
         if (!currentUserService.IsAuthenticated
@@ -62,45 +84,19 @@ public sealed class WatchlistController(
             return Unauthorized();
         }
 
-        await watchlistService.RemoveAsync(
+        await watchHistoryService.RemoveAsync(
             currentUserService.UserId,
-            contentId,
+            historyId,
             cancellationToken);
 
         return Ok(new
         {
             Success = true,
-            Message = "Content removed from watchlist successfully."
+            Message = "Watch history entry removed successfully."
         });
     }
 
-    [HttpGet("{contentId:int}")]
-    public async Task<IActionResult> Exists(
-        int contentId,
-        CancellationToken cancellationToken)
-    {
-        if (contentId <= 0)
-        {
-            return Problem(
-                statusCode: StatusCodes.Status400BadRequest,
-                title: "Invalid content ID",
-                detail: "Content ID must be greater than zero.");
-        }
-
-        if (!currentUserService.IsAuthenticated
-            || string.IsNullOrWhiteSpace(currentUserService.UserId))
-        {
-            return Unauthorized();
-        }
-
-        var exists = await watchlistService.ExistsAsync(
-            currentUserService.UserId,
-            contentId,
-            cancellationToken);
-
-        return Ok(new
-        {
-            InWatchlist = exists
-        });
-    }
+    public sealed record AddWatchHistoryRequest(
+        int? EpisodeId,
+        decimal? Rating);
 }

@@ -1,22 +1,20 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WatchBook.Application.Features.UserContent.Services;
-using WatchBook.Domain.Features.UserContent.Enums;
 using WatchBook.Infrastructure.Features.System.Interfaces;
 
-namespace WatchBook.Web.Controllers;
+namespace WatchBook.Web.Features.UserContent.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("api/watch-status")]
-public sealed class WatchStatusController(
-    IWatchStatusService watchStatusService,
+[Route("api/watchlist")]
+public sealed class WatchlistController(
+    IWatchlistService watchlistService,
     ICurrentUserService currentUserService) : ControllerBase
 {
-    [HttpPut("{contentId:int}")]
-    public async Task<IActionResult> Set(
+    [HttpPost("{contentId:int}")]
+    public async Task<IActionResult> Add(
         int contentId,
-        [FromBody] SetWatchStatusRequest request,
         CancellationToken cancellationToken)
     {
         if (contentId <= 0)
@@ -33,56 +31,15 @@ public sealed class WatchStatusController(
             return Unauthorized();
         }
 
-        if (!Enum.IsDefined(request.Status))
-        {
-            return Problem(
-                statusCode: StatusCodes.Status400BadRequest,
-                title: "Invalid watch status",
-                detail: "Watch status must be Watching, Completed, or Dropped.");
-        }
-
-        await watchStatusService.SetAsync(
+        await watchlistService.AddAsync(
             currentUserService.UserId,
             contentId,
-            request.Status,
             cancellationToken);
 
         return Ok(new
         {
             Success = true,
-            Message = "Watch status updated successfully.",
-            Status = request.Status.ToString()
-        });
-    }
-
-    [HttpGet("{contentId:int}")]
-    public async Task<IActionResult> Get(
-        int contentId,
-        CancellationToken cancellationToken)
-    {
-        if (contentId <= 0)
-        {
-            return Problem(
-                statusCode: StatusCodes.Status400BadRequest,
-                title: "Invalid content ID",
-                detail: "Content ID must be greater than zero.");
-        }
-
-        if (!currentUserService.IsAuthenticated
-            || string.IsNullOrWhiteSpace(currentUserService.UserId))
-        {
-            return Unauthorized();
-        }
-
-        var status = await watchStatusService.GetAsync(
-            currentUserService.UserId,
-            contentId,
-            cancellationToken);
-
-        return Ok(new
-        {
-            HasStatus = status.HasValue,
-            Status = status?.ToString()
+            Message = "Content added to watchlist successfully."
         });
     }
 
@@ -105,7 +62,7 @@ public sealed class WatchStatusController(
             return Unauthorized();
         }
 
-        await watchStatusService.RemoveAsync(
+        await watchlistService.RemoveAsync(
             currentUserService.UserId,
             contentId,
             cancellationToken);
@@ -113,10 +70,37 @@ public sealed class WatchStatusController(
         return Ok(new
         {
             Success = true,
-            Message = "Watch status removed successfully."
+            Message = "Content removed from watchlist successfully."
         });
     }
 
-    public sealed record SetWatchStatusRequest(
-        WatchStatusType Status);
+    [HttpGet("{contentId:int}")]
+    public async Task<IActionResult> Exists(
+        int contentId,
+        CancellationToken cancellationToken)
+    {
+        if (contentId <= 0)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Invalid content ID",
+                detail: "Content ID must be greater than zero.");
+        }
+
+        if (!currentUserService.IsAuthenticated
+            || string.IsNullOrWhiteSpace(currentUserService.UserId))
+        {
+            return Unauthorized();
+        }
+
+        var exists = await watchlistService.ExistsAsync(
+            currentUserService.UserId,
+            contentId,
+            cancellationToken);
+
+        return Ok(new
+        {
+            InWatchlist = exists
+        });
+    }
 }

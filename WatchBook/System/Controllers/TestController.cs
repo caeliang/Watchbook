@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WatchBook.Infrastructure.Features.Catalog.Movie.Interfaces;
 
-namespace WatchBook.Web.Controllers;
+namespace WatchBook.Web.System.Controllers;
 
 [ApiController]
 [Route("api/test")]

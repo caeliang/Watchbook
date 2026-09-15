@@ -1,21 +1,22 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WatchBook.Application.Features.UserContent.Services;
+using WatchBook.Domain.Features.UserContent.Enums;
 using WatchBook.Infrastructure.Features.System.Interfaces;
 
-namespace WatchBook.Web.Controllers;
+namespace WatchBook.Web.Features.UserContent.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("api/watch-history")]
-public sealed class WatchHistoryController(
-    IWatchHistoryService watchHistoryService,
+[Route("api/watch-status")]
+public sealed class WatchStatusController(
+    IWatchStatusService watchStatusService,
     ICurrentUserService currentUserService) : ControllerBase
 {
-    [HttpPost("{contentId:int}")]
-    public async Task<IActionResult> Add(
+    [HttpPut("{contentId:int}")]
+    public async Task<IActionResult> Set(
         int contentId,
-        [FromBody] AddWatchHistoryRequest? request,
+        [FromBody] SetWatchStatusRequest request,
         CancellationToken cancellationToken)
     {
         if (contentId <= 0)
@@ -32,50 +33,39 @@ public sealed class WatchHistoryController(
             return Unauthorized();
         }
 
-        await watchHistoryService.AddAsync(
-            currentUserService.UserId,
-            contentId,
-            request?.EpisodeId,
-            request?.Rating,
-            cancellationToken);
-
-        return Ok(new
-        {
-            Success = true,
-            Message = "Content added to watch history successfully.",
-            EpisodeId = request?.EpisodeId,
-            Rating = request?.Rating
-        });
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> Get(
-        CancellationToken cancellationToken)
-    {
-        if (!currentUserService.IsAuthenticated
-            || string.IsNullOrWhiteSpace(currentUserService.UserId))
-        {
-            return Unauthorized();
-        }
-
-        var history = await watchHistoryService.GetAsync(
-            currentUserService.UserId,
-            cancellationToken);
-
-        return Ok(history);
-    }
-
-    [HttpDelete("{historyId:int}")]
-    public async Task<IActionResult> Remove(
-        int historyId,
-        CancellationToken cancellationToken)
-    {
-        if (historyId <= 0)
+        if (!Enum.IsDefined(request.Status))
         {
             return Problem(
                 statusCode: StatusCodes.Status400BadRequest,
-                title: "Invalid history ID",
-                detail: "History ID must be greater than zero.");
+                title: "Invalid watch status",
+                detail: "Watch status must be Watching, Completed, or Dropped.");
+        }
+
+        await watchStatusService.SetAsync(
+            currentUserService.UserId,
+            contentId,
+            request.Status,
+            cancellationToken);
+
+        return Ok(new
+        {
+            Success = true,
+            Message = "Watch status updated successfully.",
+            Status = request.Status.ToString()
+        });
+    }
+
+    [HttpGet("{contentId:int}")]
+    public async Task<IActionResult> Get(
+        int contentId,
+        CancellationToken cancellationToken)
+    {
+        if (contentId <= 0)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Invalid content ID",
+                detail: "Content ID must be greater than zero.");
         }
 
         if (!currentUserService.IsAuthenticated
@@ -84,19 +74,49 @@ public sealed class WatchHistoryController(
             return Unauthorized();
         }
 
-        await watchHistoryService.RemoveAsync(
+        var status = await watchStatusService.GetAsync(
             currentUserService.UserId,
-            historyId,
+            contentId,
+            cancellationToken);
+
+        return Ok(new
+        {
+            HasStatus = status.HasValue,
+            Status = status?.ToString()
+        });
+    }
+
+    [HttpDelete("{contentId:int}")]
+    public async Task<IActionResult> Remove(
+        int contentId,
+        CancellationToken cancellationToken)
+    {
+        if (contentId <= 0)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Invalid content ID",
+                detail: "Content ID must be greater than zero.");
+        }
+
+        if (!currentUserService.IsAuthenticated
+            || string.IsNullOrWhiteSpace(currentUserService.UserId))
+        {
+            return Unauthorized();
+        }
+
+        await watchStatusService.RemoveAsync(
+            currentUserService.UserId,
+            contentId,
             cancellationToken);
 
         return Ok(new
         {
             Success = true,
-            Message = "Watch history entry removed successfully."
+            Message = "Watch status removed successfully."
         });
     }
 
-    public sealed record AddWatchHistoryRequest(
-        int? EpisodeId,
-        decimal? Rating);
+    public sealed record SetWatchStatusRequest(
+        WatchStatusType Status);
 }

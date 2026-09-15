@@ -1,4 +1,4 @@
-﻿namespace WatchBook.Web.Models.Content;
+﻿namespace WatchBook.Web.Features.Catalog.Import;
 
 public sealed class ContentImportResponse
 {

@@ -1,4 +1,4 @@
-﻿namespace WatchBook.Application.Interfaces;
+﻿namespace WatchBook.Application.Features.Authentication.Services;
 
 public interface IAuthService
 {

@@ -1,4 +1,4 @@
-﻿namespace WatchBook.Application.Interfaces;
+﻿namespace WatchBook.Application.Features.UserContent.Services;
 
 public interface IContentRatingService
 {

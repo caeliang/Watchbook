@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WatchBook.Application.Interfaces;
+using WatchBook.Application.Features.UserContent.Services;
 
 namespace WatchBook.Web.Controllers;
 

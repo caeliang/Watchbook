@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using WatchBook.Application.Interfaces;
+using WatchBook.Application.Features.Authentication.Services;
+using WatchBook.Application.Features.Catalog.Interfaces;
+using WatchBook.Application.Features.UserContent.Services;
 using WatchBook.Infrastructure.External.TMDb.Clients;
 using WatchBook.Infrastructure.External.TMDb.Extensions;
 using WatchBook.Infrastructure.External.TMDb.Handlers;

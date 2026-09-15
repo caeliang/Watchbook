@@ -7,8 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Features\" />
-    <Folder Include="Services\" />
+    <Compile Remove="Services\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Authentication\DTOs\" />
+    <Folder Include="Features\Authentication\Interfaces\" />
+    <Folder Include="Features\Catalog\Services\" />
+    <Folder Include="Features\Social\DTOs\" />
+    <Folder Include="Features\Social\Interfaces\" />
+    <Folder Include="Features\Social\Services\" />
+    <Folder Include="Features\UserContent\DTOs\" />
+    <Folder Include="Features\UserContent\Interfaces\" />
   </ItemGroup>
 
   <ItemGroup>

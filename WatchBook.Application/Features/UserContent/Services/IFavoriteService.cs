@@ -1,6 +1,6 @@
-﻿namespace WatchBook.Application.Interfaces;
+﻿namespace WatchBook.Application.Features.UserContent.Services;
 
-public interface IWatchlistService
+public interface IFavoriteService
 {
     Task AddAsync(
         string userId,

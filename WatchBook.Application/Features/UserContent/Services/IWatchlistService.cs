@@ -1,21 +1,18 @@
-﻿using WatchBook.Domain.Features.UserContent.Enums;
+﻿namespace WatchBook.Application.Features.UserContent.Services;
 
-namespace WatchBook.Application.Interfaces;
-
-public interface IWatchStatusService
+public interface IWatchlistService
 {
-    Task SetAsync(
-        string userId,
-        int contentId,
-        WatchStatusType status,
-        CancellationToken cancellationToken = default);
-
-    Task<WatchStatusType?> GetAsync(
+    Task AddAsync(
         string userId,
         int contentId,
         CancellationToken cancellationToken = default);
 
     Task RemoveAsync(
+        string userId,
+        int contentId,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> ExistsAsync(
         string userId,
         int contentId,
         CancellationToken cancellationToken = default);

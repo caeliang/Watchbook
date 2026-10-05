@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WatchBook.Domain.Features.Catalog.Entities;
 using WatchBook.Domain.Features.UserContent.Entities;
 using WatchBook.Infrastructure.Features.Authentication.Identity;
-
+using WatchBook.Domain.Features.Social.Entities;
 namespace WatchBook.Infrastructure.Persistence;
 
 public class WatchBookDbContext
@@ -35,6 +35,7 @@ public class WatchBookDbContext
     public DbSet<WatchStatus> WatchStatuses { get; set; }
     public DbSet<WatchHistory> WatchHistories { get; set; }
 
+    public DbSet<Comment> Comments { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

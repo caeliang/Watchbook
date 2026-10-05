@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WatchBook.Web.Exceptions;
+namespace WatchBook.Exceptions;
 
 public sealed class GlobalExceptionHandler(
     IProblemDetailsService problemDetailsService,
@@ -23,9 +24,14 @@ public sealed class GlobalExceptionHandler(
                 when httpRequestException.StatusCode is not null
                 => (int)httpRequestException.StatusCode,
 
-            KeyNotFoundException => StatusCodes.Status404NotFound,
+            UnauthorizedAccessException
+                => StatusCodes.Status403Forbidden,
 
-            ArgumentException => StatusCodes.Status400BadRequest,
+            KeyNotFoundException
+                => StatusCodes.Status404NotFound,
+
+            ArgumentException
+                => StatusCodes.Status400BadRequest,
 
             _ => StatusCodes.Status500InternalServerError
         };
@@ -49,25 +55,36 @@ public sealed class GlobalExceptionHandler(
     private static string GetTitle(int statusCode) =>
         statusCode switch
         {
-            StatusCodes.Status400BadRequest => "Bad Request",
-            StatusCodes.Status404NotFound => "Resource Not Found",
-            StatusCodes.Status502BadGateway => "External Service Error",
+            StatusCodes.Status400BadRequest
+                => "Bad Request",
+
+            StatusCodes.Status403Forbidden
+                => "Forbidden",
+
+            StatusCodes.Status404NotFound
+                => "Resource Not Found",
+
+            StatusCodes.Status502BadGateway
+                => "External Service Error",
+
             _ => "An unexpected error occurred."
         };
 
     private static string GetDetail(int statusCode) =>
         statusCode switch
         {
-            StatusCodes.Status400BadRequest =>
-                "The request was invalid.",
+            StatusCodes.Status400BadRequest
+                => "The request was invalid.",
 
-            StatusCodes.Status404NotFound =>
-                "The requested resource could not be found.",
+            StatusCodes.Status403Forbidden
+                => "You do not have permission to perform this action.",
 
-            StatusCodes.Status502BadGateway =>
-                "The external service could not be reached successfully.",
+            StatusCodes.Status404NotFound
+                => "The requested resource could not be found.",
 
-            _ =>
-                "An unexpected error occurred while processing the request."
+            StatusCodes.Status502BadGateway
+                => "The external service could not be reached successfully.",
+
+            _ => "An unexpected error occurred while processing the request."
         };
 }

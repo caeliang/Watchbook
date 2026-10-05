@@ -1,6 +1,5 @@
 using WatchBook.Infrastructure;
-using WatchBook.Web.Exceptions;
-
+using WatchBook.Exceptions;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
